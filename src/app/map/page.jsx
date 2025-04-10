@@ -31,6 +31,8 @@ export default function MapPage() {
     const router = useRouter();
     const [position, setPosition] = useState(null);
     const [cameraData, setCameraData] = useState(null);
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         // Get the camera data from localStorage
@@ -42,9 +44,17 @@ export default function MapPage() {
 
     const handleSubmit = async () => {
         if (!position) {
-            alert('Please select a location on the map');
+            setError('Please select a location on the map');
             return;
         }
+
+        if (!cameraData) {
+            setError('No camera data found. Please fill the form first.');
+            return;
+        }
+
+        setIsLoading(true);
+        setError('');
 
         try {
             // Combine the camera data with the selected coordinates
@@ -56,14 +66,29 @@ export default function MapPage() {
                 }
             };
 
-            // Here we'll add the database connection logic later
-            // For now, we'll just store the complete data in localStorage
-            localStorage.setItem('completeCameraData', JSON.stringify(finalData));
+            const response = await fetch('/api/cameras', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(finalData),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to save camera data');
+            }
+
+            // Clear the temporary storage
+            localStorage.removeItem('cameraData');
             
             // Redirect back to the main page or wherever needed
             router.push('/');
         } catch (error) {
-            alert('Failed to save location data. Please try again.');
+            setError(error.message);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -71,6 +96,13 @@ export default function MapPage() {
         <div className="min-h-screen bg-gray-100 py-6 px-4">
             <div className="max-w-4xl mx-auto">
                 <h2 className="text-2xl font-bold mb-4 text-gray-800">Select Camera Location</h2>
+                
+                {error && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        {error}
+                    </div>
+                )}
+
                 <div className="bg-white rounded-lg shadow-md p-4 mb-4">
                     <p className="text-gray-600 mb-2">Click on the map to select the camera location</p>
                     {position && (
@@ -96,9 +128,12 @@ export default function MapPage() {
 
                 <button
                     onClick={handleSubmit}
-                    className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    disabled={isLoading}
+                    className={`w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                        isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
                 >
-                    Save Location
+                    {isLoading ? 'Saving...' : 'Save Location'}
                 </button>
             </div>
         </div>
