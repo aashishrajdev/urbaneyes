@@ -9,13 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "leaflet": "^1.9.4",
     "mongoose": "^8.13.2",
-    "next": "15.2.5",
+    "next": "^15.2.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "urbaneye": "file:",
-    "leaflet": "^1.9.4",
-    "react-leaflet": "^4.2.1"
+    "react-leaflet": "^4.2.1",
+    "urbaneye": "file:"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
