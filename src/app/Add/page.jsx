@@ -20,7 +20,7 @@ export default function AddCamera() {
       ...prevState,
       [name]: value.trim(),
     }));
-    setError(""); // Clear error when user types
+    setError("");
   };
 
   const validateForm = () => {
@@ -41,7 +41,6 @@ export default function AddCamera() {
     }
 
     try {
-      // Check if camera ID already exists
       const response = await fetch(`/api/cameras?id=${formData.id}`);
       const cameras = await response.json();
 
@@ -50,10 +49,7 @@ export default function AddCamera() {
         return;
       }
 
-      // Store form data temporarily
       localStorage.setItem("cameraData", JSON.stringify(formData));
-
-      // Redirect to map page for location pinpointing
       router.push("/map");
     } catch (error) {
       setError("Failed to validate camera ID. Please try again.");
@@ -61,94 +57,61 @@ export default function AddCamera() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-          Add Camera
-        </h2>
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-100 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+      <div className="w-full max-w-xl bg-white/80 backdrop-blur-md shadow-2xl rounded-2xl p-8 border border-gray-200 text-black">
+        <h2 className="text-3xl font-bold text-center mb-6">Add New Camera</h2>
 
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4 text-black  ">
-          <div>
-            <label
-              htmlFor="id"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Camera ID
-            </label>
-            <input
-              type="text"
-              id="id"
-              name="id"
-              value={formData.id}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder="Enter unique camera ID"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="location"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Location
-            </label>
-            <input
-              type="text"
-              id="location"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder="Enter camera location"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="resolution"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Resolution
-            </label>
-            <input
-              type="text"
-              id="resolution"
-              name="resolution"
-              value={formData.resolution}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder="Enter camera resolution"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="visionRange"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Vision Range
-            </label>
-            <input
-              type="text"
-              id="visionRange"
-              name="visionRange"
-              value={formData.visionRange}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder="Enter vision range"
-            />
-          </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {[
+            {
+              label: "Camera ID",
+              name: "id",
+              placeholder: "Enter unique camera ID",
+            },
+            {
+              label: "Location",
+              name: "location",
+              placeholder: "Enter camera location",
+            },
+            {
+              label: "Resolution",
+              name: "resolution",
+              placeholder: "e.g. 1080p, 4K",
+            },
+            {
+              label: "Vision Range",
+              name: "visionRange",
+              placeholder: "e.g. 30 meters",
+            },
+          ].map((field) => (
+            <div key={field.name}>
+              <label
+                htmlFor={field.name}
+                className="block text-sm font-medium mb-1"
+              >
+                {field.label}
+              </label>
+              <input
+                type="text"
+                id={field.name}
+                name={field.name}
+                value={formData[field.name]}
+                onChange={handleChange}
+                placeholder={field.placeholder}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-black"
+              />
+            </div>
+          ))}
 
           <button
             type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             Continue to Map
           </button>
