@@ -3,19 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "leaflet": "^1.9.4",
     "mongoose": "^8.13.2",
     "next": "15.2.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-leaflet": "^4.2.1",
-    "urbaneye": "file:"
+    "urbaneye": "file:",
+    "leaflet": "^1.9.4",
+    "react-leaflet": "^4.2.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -10,7 +10,8 @@ export default function AddCamera() {
         location: '',
         resolution: '',
         visionRange: ''
-    });
+    });  
+    
     const [error, setError] = useState('');
 
     const handleChange = (e) => {
