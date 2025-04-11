@@ -10,35 +10,53 @@ export default function AddCamera() {
         location: '',
         resolution: '',
         visionRange: ''
-    });
+    });  
+    
     const [error, setError] = useState('');
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({
             ...prevState,
-            [name]: value
+            [name]: value.trim()
         }));
+        setError(''); // Clear error when user types
+    };
+
+    const validateForm = () => {
+        if (!formData.id) return 'Camera ID is required';
+        if (!formData.location) return 'Location is required';
+        if (!formData.resolution) return 'Resolution is required';
+        if (!formData.visionRange) return 'Vision Range is required';
+        return '';
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // Basic validation
-        if (!formData.id || !formData.location || !formData.resolution || !formData.visionRange) {
-            setError('All fields are required');
+        const validationError = validateForm();
+        if (validationError) {
+            setError(validationError);
             return;
         }
 
         try {
-            // Here we'll add the database connection logic later
-            // For now, we'll just store the data in localStorage for demonstration
+            // Check if camera ID already exists
+            const response = await fetch(`/api/cameras?id=${formData.id}`);
+            const cameras = await response.json();
+            
+            if (cameras.some(camera => camera.id === formData.id)) {
+                setError('Camera ID already exists');
+                return;
+            }
+
+            // Store form data temporarily
             localStorage.setItem('cameraData', JSON.stringify(formData));
             
             // Redirect to map page for location pinpointing
             router.push('/map');
         } catch (error) {
-            setError('Failed to submit form. Please try again.');
+            setError('Failed to validate camera ID. Please try again.');
         }
     };
 
