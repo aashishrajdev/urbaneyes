@@ -1,55 +1,50 @@
 import mongoose from 'mongoose';
 
-const CameraSchema = new mongoose.Schema({
-    id: {
-        type: String,
-        required: [true, 'Camera ID is required'],
-        unique: true,
-        trim: true
-    },
+const cameraSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: [true, 'Camera name is required'],
-        trim: true
+        required: true,
     },
     location: {
-        type: String,
-        required: [true, 'Location description is required'],
-        trim: true
+        type: {
+            type: String,
+            enum: ['Point'],
+            required: true,
+        },
+        coordinates: {
+            type: [Number],
+            required: true,
+        },
     },
     resolution: {
         type: String,
-        required: [true, 'Camera resolution is required'],
-        trim: true
+        required: true,
     },
     visionRange: {
-        type: String,
-        required: [true, 'Vision range is required'],
-        trim: true
+        type: Number,
+        required: true,
     },
     status: {
         type: String,
-        required: [true, 'Camera status is required'],
-        enum: ['active', 'maintenance', 'offline'],
-        default: 'active'
+        enum: ['active', 'inactive', 'maintenance'],
+        default: 'active',
     },
-    coordinates: {
-        latitude: {
-            type: Number,
-            required: false
-        },
-        longitude: {
-            type: Number,
-            required: false
-        }
+    description: {
+        type: String,
     },
     createdAt: {
         type: Date,
-        default: Date.now
-    }
+        default: Date.now,
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
-// Prevent model compilation error in development due to hot reloading
-const Camera = mongoose.models.Camera || mongoose.model('Camera', CameraSchema);
+// Create a 2dsphere index for location
+cameraSchema.index({ location: '2dsphere' });
+
+const Camera = mongoose.models.Camera || mongoose.model('Camera', cameraSchema);
 
 export default Camera; 

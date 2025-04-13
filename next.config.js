@@ -10,7 +10,17 @@ const nextConfig = {
   },
   images: {
     domains: ['tile.openstreetmap.org'],
-  }
+  },
+  pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/home',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig; 

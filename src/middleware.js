@@ -6,7 +6,7 @@ export async function middleware(request) {
     const path = request.nextUrl.pathname;
 
     // List of protected routes that require authentication
-    const protectedRoutes = ['/Add', '/map', '/api/cameras'];
+    const protectedRoutes = ['/add', '/map', '/api/cameras'];
 
     // Check if the current path is a protected route
     const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
@@ -42,7 +42,7 @@ export async function middleware(request) {
 
 export const config = {
     matcher: [
-        '/Add/:path*',
+        '/add/:path*',
         '/map/:path*',
         '/api/cameras/:path*',
     ],

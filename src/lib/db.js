@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urbaneye';
 
 if (!MONGODB_URI) {
     throw new Error('Please define the MONGODB_URI environment variable inside .env');
@@ -12,7 +12,7 @@ if (!cached) {
     cached = global.mongoose = { conn: null, promise: null };
 }
 
-async function connectDB() {
+async function dbConnect() {
     if (cached.conn) {
         return cached.conn;
     }
@@ -37,4 +37,4 @@ async function connectDB() {
     return cached.conn;
 }
 
-export default connectDB; 
+export default dbConnect; 

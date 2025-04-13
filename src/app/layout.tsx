@@ -9,9 +9,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Urban Eye",
+  title: "UrbanEyes",
   description:
-    "UrbanEye is a smart city surveillance system designed to enhance urban safety through advanced monitoring and real-time insights.",
+    "UrbanEyes is a smart city surveillance system designed to enhance urban safety through advanced monitoring and real-time insights.",
 };
 
 export default function RootLayout({
