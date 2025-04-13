@@ -3,13 +3,20 @@ import jwt from 'jsonwebtoken';
 
 export async function middleware(request) {
     const token = request.cookies.get('token')?.value;
+    const path = request.nextUrl.pathname;
 
-    // Allow access to login page
-    if (request.nextUrl.pathname === '/login') {
+    // List of protected routes that require authentication
+    const protectedRoutes = ['/Add', '/map', '/api/cameras'];
+
+    // Check if the current path is a protected route
+    const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
+
+    // If it's not a protected route, allow access
+    if (!isProtectedRoute) {
         return NextResponse.next();
     }
 
-    // Check if user is authenticated
+    // For protected routes, check authentication
     if (!token) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
@@ -35,7 +42,6 @@ export async function middleware(request) {
 
 export const config = {
     matcher: [
-        '/',
         '/Add/:path*',
         '/map/:path*',
         '/api/cameras/:path*',
