@@ -19,7 +19,7 @@ export default function Home() {
             <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8 space-y-4 sm:space-y-0 sm:space-x-4">
               <div className="rounded-md shadow">
                 <Link
-                  href="/Add"
+                  href="/add"
                   className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10"
                 >
                   Add New Camera
@@ -27,7 +27,7 @@ export default function Home() {
               </div>
               <div className="rounded-md shadow">
                 <Link
-                  href="/Search"
+                  href="/search"
                   className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10"
                 >
                   Search Cameras
@@ -186,7 +186,7 @@ export default function Home() {
           <div className="mt-8 flex lg:mt-0 lg:flex-shrink-0">
             <div className="inline-flex rounded-md shadow">
               <Link
-                href="/Add"
+                href="/add"
                 className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
               >
                 Get Started
