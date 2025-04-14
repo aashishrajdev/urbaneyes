@@ -7,6 +7,11 @@ const CameraSchema = new mongoose.Schema({
         unique: true,
         trim: true
     },
+    name: {
+        type: String,
+        required: [true, 'Camera name is required'],
+        trim: true
+    },
     location: {
         type: String,
         required: [true, 'Location description is required'],
@@ -22,14 +27,20 @@ const CameraSchema = new mongoose.Schema({
         required: [true, 'Vision range is required'],
         trim: true
     },
+    status: {
+        type: String,
+        required: [true, 'Camera status is required'],
+        enum: ['active', 'maintenance', 'offline'],
+        default: 'active'
+    },
     coordinates: {
         latitude: {
             type: Number,
-            required: [true, 'Latitude is required']
+            required: false
         },
         longitude: {
             type: Number,
-            required: [true, 'Longitude is required']
+            required: false
         }
     },
     createdAt: {
