@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
 export default function Navigation() {
   const pathname = usePathname();
 
@@ -18,7 +25,6 @@ export default function Navigation() {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link href="/Home">
-              {" "}
               <div className="flex-shrink-0">
                 <span className="text-white font-bold text-xl">UrbanEyes</span>
               </div>
@@ -52,6 +58,15 @@ export default function Navigation() {
               </div>
             </div>
           </div>
+          <ClerkProvider>
+            <div className="flex items-center space-x-4">
+              <SignInButton>
+                <button className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+                  Login
+                </button>
+              </SignInButton>
+            </div>
+          </ClerkProvider>
         </div>
       </div>
     </nav>
