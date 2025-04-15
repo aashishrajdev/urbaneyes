@@ -1,9 +1,10 @@
-import './globals.css';
-import Navigation from '@/components/Navigation';
+import "./globals.css";
+import Navigation from "@/components/Navigation";
 
 export const metadata = {
-  title: 'UrbanEyes - Camera Management System',
-  description: 'A comprehensive camera management system for urban surveillance',
+  title: "UrbanEyes - Camera Management System",
+  description:
+    "A comprehensive camera management system for urban surveillance",
 };
 
 export default function RootLayout({ children }) {
@@ -11,10 +12,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <Navigation />
-        <main className="min-h-screen bg-gray-100">
-          {children}
-        </main>
+
+        <main className="min-h-screen bg-gray-100">{children}</main>
       </body>
     </html>
   );
-} 
+}

@@ -1,92 +1,105 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import dynamic from 'next/dynamic';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 
 // Dynamically import the Map component to avoid SSR issues
-const Map = dynamic(() => import('@/components/Map'), {
+const Map = dynamic(() => import("@/components/Map"), {
   ssr: false,
-  loading: () => <div className="h-[400px] w-full bg-gray-100 flex items-center justify-center">Loading map...</div>
+  loading: () => (
+    <div className="h-[400px] w-full bg-gray-100 flex items-center justify-center">
+      Loading map...
+    </div>
+  ),
 });
 
 export default function AddCamera() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
+    name: "",
+    description: "",
     location: null,
-    resolution: '',
-    visionRange: '',
-    status: 'active'
+    resolution: "",
+    visionRange: "",
+    status: "active",
   });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(1);
   const [selectedLocation, setSelectedLocation] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleLocationSelect = (latlng) => {
     setSelectedLocation(latlng);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       location: {
-        type: 'Point',
-        coordinates: [latlng.lng, latlng.lat]
-      }
+        type: "Point",
+        coordinates: [latlng.lng, latlng.lat],
+      },
     }));
   };
 
   const nextStep = () => {
     if (step === 1 && (!formData.name || !formData.description)) {
-      setError('Please fill in all required fields');
+      setError("Please fill in all required fields");
       return;
     }
     if (step === 2 && !formData.location) {
-      setError('Please select a location on the map');
+      setError("Please select a location on the map");
       return;
     }
-    setError('');
-    setStep(prev => prev + 1);
+    setError("");
+    setStep((prev) => prev + 1);
   };
 
   const prevStep = () => {
-    setStep(prev => prev - 1);
+    setStep((prev) => prev - 1);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     try {
       // Validate required fields
       if (!formData.name || !formData.description || !formData.location) {
-        throw new Error('Please fill in all required fields');
+        throw new Error("Please fill in all required fields");
       }
 
       // Validate location data
-      if (!formData.location.coordinates || formData.location.coordinates.length !== 2) {
-        throw new Error('Invalid location data. Please select a location on the map.');
+      if (
+        !formData.location.coordinates ||
+        formData.location.coordinates.length !== 2
+      ) {
+        throw new Error(
+          "Invalid location data. Please select a location on the map."
+        );
       }
 
       // Validate resolution
       if (!formData.resolution) {
-        throw new Error('Please select a resolution');
+        throw new Error("Please select a resolution");
       }
 
       // Validate vision range
-      if (!formData.visionRange || isNaN(formData.visionRange) || formData.visionRange <= 0) {
-        throw new Error('Please enter a valid vision range (in meters)');
+      if (
+        !formData.visionRange ||
+        isNaN(formData.visionRange) ||
+        formData.visionRange <= 0
+      ) {
+        throw new Error("Please enter a valid vision range (in meters)");
       }
 
       // Format the data according to the Camera model requirements
@@ -94,43 +107,43 @@ export default function AddCamera() {
         name: formData.name,
         description: formData.description,
         location: {
-          type: 'Point',
-          coordinates: formData.location.coordinates // Already in [longitude, latitude] format
+          type: "Point",
+          coordinates: formData.location.coordinates, // Already in [longitude, latitude] format
         },
         resolution: formData.resolution,
         visionRange: Number(formData.visionRange),
-        status: formData.status || 'active'
+        status: formData.status || "active",
       };
 
       // Ensure no id fields are present
       delete submissionData.id;
       delete submissionData._id;
 
-      console.log('Form Data:', formData);
-      console.log('Submission Data:', submissionData);
+      console.log("Form Data:", formData);
+      console.log("Submission Data:", submissionData);
 
-      const response = await fetch('/api/cameras', {
-        method: 'POST',
+      const response = await fetch("/api/cameras", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(submissionData),
       });
 
       const data = await response.json();
-      console.log('API Response:', data);
-      console.log('Response Status:', response.status);
+      console.log("API Response:", data);
+      console.log("Response Status:", response.status);
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to add camera');
+        throw new Error(data.message || "Failed to add camera");
       }
 
-      setSuccess('Camera added successfully!');
+      setSuccess("Camera added successfully!");
       setTimeout(() => {
-        router.push('/dashboard');
+        router.push("/dashboard");
       }, 2000);
     } catch (err) {
-      console.error('Error details:', err);
+      console.error("Error details:", err);
       setError(err.message);
     } finally {
       setIsLoading(false);
@@ -165,7 +178,10 @@ export default function AddCamera() {
               {step === 1 && (
                 <div className="space-y-4">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-medium text-gray-700"
+                    >
                       Camera Name *
                     </label>
                     <input
@@ -180,7 +196,10 @@ export default function AddCamera() {
                   </div>
 
                   <div>
-                    <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="description"
+                      className="block text-sm font-medium text-gray-700"
+                    >
                       Description *
                     </label>
                     <textarea
@@ -204,15 +223,30 @@ export default function AddCamera() {
                     </label>
                     <div className="mt-1 h-[400px] w-full">
                       <Map
-                        initialPosition={formData.location ? [formData.location.coordinates[1], formData.location.coordinates[0]] : [20.5937, 78.9629]}
+                        initialPosition={
+                          formData.location
+                            ? [
+                                formData.location.coordinates[1],
+                                formData.location.coordinates[0],
+                              ]
+                            : [20.5937, 78.9629]
+                        }
                         onLocationSelect={handleLocationSelect}
                       />
                     </div>
                     {selectedLocation && (
                       <div className="mt-4 p-4 bg-gray-50 rounded-md">
-                        <p className="text-sm font-medium">Selected Location:</p>
-                        <p className="text-sm text-gray-600">Latitude: {selectedLocation?.lat?.toFixed(6) || 'Not selected'}</p>
-                        <p className="text-sm text-gray-600">Longitude: {selectedLocation?.lng?.toFixed(6) || 'Not selected'}</p>
+                        <p className="text-sm font-medium">
+                          Selected Location:
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Latitude:{" "}
+                          {selectedLocation?.lat?.toFixed(6) || "Not selected"}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Longitude:{" "}
+                          {selectedLocation?.lng?.toFixed(6) || "Not selected"}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -222,7 +256,10 @@ export default function AddCamera() {
               {step === 3 && (
                 <div className="space-y-4">
                   <div>
-                    <label htmlFor="resolution" className="block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="resolution"
+                      className="block text-sm font-medium text-gray-700"
+                    >
                       Resolution
                     </label>
                     <input
@@ -237,7 +274,10 @@ export default function AddCamera() {
                   </div>
 
                   <div>
-                    <label htmlFor="visionRange" className="block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="visionRange"
+                      className="block text-sm font-medium text-gray-700"
+                    >
                       Vision Range (in meters)
                     </label>
                     <input
@@ -252,7 +292,10 @@ export default function AddCamera() {
                   </div>
 
                   <div>
-                    <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="status"
+                      className="block text-sm font-medium text-gray-700"
+                    >
                       Status
                     </label>
                     <select
@@ -294,7 +337,7 @@ export default function AddCamera() {
                     disabled={isLoading}
                     className="ml-auto inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
-                    {isLoading ? 'Adding...' : 'Add Camera'}
+                    {isLoading ? "Adding..." : "Add Camera"}
                   </button>
                 )}
               </div>
@@ -304,4 +347,4 @@ export default function AddCamera() {
       </div>
     </div>
   );
-} 
+}

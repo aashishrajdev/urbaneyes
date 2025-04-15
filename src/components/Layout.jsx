@@ -7,7 +7,7 @@ export default function Layout({ children }) {
   const pathname = usePathname();
 
   const isActive = (path) => {
-    if (path === '/') return pathname === path;
+    if (path === "/") return pathname === path;
     return pathname.startsWith(path);
   };
 
@@ -28,9 +28,9 @@ export default function Layout({ children }) {
               <Link
                 href="/dashboard"
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/dashboard')
-                    ? 'bg-blue-700 text-white'
-                    : 'text-white hover:bg-blue-500'
+                  isActive("/dashboard")
+                    ? "bg-blue-700 text-white"
+                    : "text-white hover:bg-blue-500"
                 }`}
               >
                 Dashboard
@@ -38,9 +38,9 @@ export default function Layout({ children }) {
               <Link
                 href="/add"
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/add')
-                    ? 'bg-blue-700 text-white'
-                    : 'text-white hover:bg-blue-500'
+                  isActive("/add")
+                    ? "bg-blue-700 text-white"
+                    : "text-white hover:bg-blue-500"
                 }`}
               >
                 Add Camera
@@ -51,9 +51,7 @@ export default function Layout({ children }) {
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1">
-        {children}
-      </main>
+      <main className="flex-1">{children}</main>
 
       {/* Footer */}
       <footer className="bg-gray-800 text-white">
@@ -65,4 +63,4 @@ export default function Layout({ children }) {
       </footer>
     </div>
   );
-} 
+}
