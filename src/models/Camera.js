@@ -1,55 +1,84 @@
 import mongoose from 'mongoose';
 
-const CameraSchema = new mongoose.Schema({
-    id: {
-        type: String,
-        required: [true, 'Camera ID is required'],
-        unique: true,
-        trim: true
-    },
+const cameraSchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, 'Camera name is required'],
         trim: true
     },
-    location: {
+    description: {
         type: String,
-        required: [true, 'Location description is required'],
+        required: [true, 'Camera description is required'],
         trim: true
+    },
+    location: {
+        type: {
+            type: String,
+            enum: ['Point'],
+            default: 'Point'
+        },
+        coordinates: {
+            type: [Number],
+            required: true,
+            validate: {
+                validator: function(v) {
+                    return v.length === 2 && 
+                           v[0] >= -180 && v[0] <= 180 && // longitude
+                           v[1] >= -90 && v[1] <= 90;     // latitude
+                },
+                message: 'Coordinates must be valid [longitude, latitude] values'
+            }
+        }
     },
     resolution: {
         type: String,
-        required: [true, 'Camera resolution is required'],
-        trim: true
+        enum: ['1920x1080', '1280x720', '3840x2160', '2560x1440'],
+        default: '1920x1080'
     },
     visionRange: {
-        type: String,
-        required: [true, 'Vision range is required'],
-        trim: true
+        type: Number,
+        default: 100,
+        min: [1, 'Vision range must be at least 1 meter']
     },
     status: {
         type: String,
-        required: [true, 'Camera status is required'],
-        enum: ['active', 'maintenance', 'offline'],
+        enum: ['active', 'inactive', 'maintenance'],
         default: 'active'
-    },
-    coordinates: {
-        latitude: {
-            type: Number,
-            required: false
-        },
-        longitude: {
-            type: Number,
-            required: false
-        }
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
     }
+}, {
+    timestamps: true, // This will automatically handle createdAt and updatedAt
 });
 
-// Prevent model compilation error in development due to hot reloading
-const Camera = mongoose.models.Camera || mongoose.model('Camera', CameraSchema);
+// Create a 2dsphere index for location
+cameraSchema.index({ location: '2dsphere' });
+
+// Update the updatedAt field before saving
+cameraSchema.pre('save', function(next) {
+    this.updatedAt = new Date();
+    next();
+});
+
+// Add a method to validate the data
+cameraSchema.methods.validateData = function() {
+    const errors = [];
+    
+    if (!this.name) errors.push('Name is required');
+    if (!this.description) errors.push('Description is required');
+    
+    // Check if location is valid
+    if (!this.location) {
+        errors.push('Location is required');
+    } else if (typeof this.location === 'object' && this.location.type === 'Point') {
+        // Validate GeoJSON Point
+        if (!this.location.coordinates || this.location.coordinates.length !== 2) {
+            errors.push('Valid location coordinates are required');
+        }
+    }
+    
+    return errors;
+};
+
+// Ensure the model is only created once
+const Camera = mongoose.models.Camera || mongoose.model('Camera', cameraSchema);
 
 export default Camera; 

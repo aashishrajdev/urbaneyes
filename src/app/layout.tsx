@@ -1,29 +1,22 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import Layout from "@/components/Layout";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
 
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-});
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "Urban Eye",
-  description:
-    "UrbanEye is a smart city surveillance system designed to enhance urban safety through advanced monitoring and real-time insights.",
+  title: 'UrbanEye - Smart City Surveillance',
+  description: 'A smart city surveillance system for managing and monitoring cameras',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased`}>
-        <Layout>{children}</Layout>
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }
