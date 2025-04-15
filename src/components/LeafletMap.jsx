@@ -1,18 +1,25 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
-import L from 'leaflet';
+import { useState, useEffect } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMapEvents,
+} from "react-leaflet";
+import L from "leaflet";
 
 // Fix for default marker icon in Next.js
 const icon = L.icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+  iconRetinaUrl:
+    "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
-  shadowSize: [41, 41]
+  shadowSize: [41, 41],
 });
 
 function LocationMarker({ initialPosition, onLocationSelect }) {
@@ -33,13 +40,12 @@ function LocationMarker({ initialPosition, onLocationSelect }) {
   });
 
   return position ? (
-    <Marker 
-      position={position}
-      icon={icon}
-    >
+    <Marker position={position} icon={icon}>
       <Popup>
-        Selected Location<br />
-        Lat: {position[0].toFixed(6)}<br />
+        Selected Location
+        <br />
+        Lat: {position[0].toFixed(6)}
+        <br />
         Lng: {position[1].toFixed(6)}
       </Popup>
     </Marker>
@@ -48,11 +54,7 @@ function LocationMarker({ initialPosition, onLocationSelect }) {
 
 function Markers({ markers }) {
   return markers.map((marker, index) => (
-    <Marker
-      key={index}
-      position={marker.position}
-      icon={icon}
-    >
+    <Marker key={index} position={marker.position} icon={icon}>
       <Popup>
         <div dangerouslySetInnerHTML={{ __html: marker.popup }} />
       </Popup>
@@ -60,7 +62,11 @@ function Markers({ markers }) {
   ));
 }
 
-export default function LeafletMap({ onLocationSelect, initialPosition = [20.5937, 78.9629], markers = [] }) {
+export default function LeafletMap({
+  onLocationSelect,
+  initialPosition = [20.5937, 78.9629],
+  markers = [],
+}) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -75,7 +81,7 @@ export default function LeafletMap({ onLocationSelect, initialPosition = [20.593
     <MapContainer
       center={initialPosition}
       zoom={13}
-      style={{ height: '100%', width: '100%' }}
+      style={{ height: "100%", width: "100%" }}
       scrollWheelZoom={true}
     >
       <TileLayer
@@ -83,7 +89,7 @@ export default function LeafletMap({ onLocationSelect, initialPosition = [20.593
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {onLocationSelect && (
-        <LocationMarker 
+        <LocationMarker
           initialPosition={initialPosition}
           onLocationSelect={onLocationSelect}
         />
@@ -91,4 +97,4 @@ export default function LeafletMap({ onLocationSelect, initialPosition = [20.593
       {markers.length > 0 && <Markers markers={markers} />}
     </MapContainer>
   );
-} 
+}
