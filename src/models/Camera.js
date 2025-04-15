@@ -15,7 +15,7 @@ const cameraSchema = new mongoose.Schema({
         type: {
             type: String,
             enum: ['Point'],
-            required: true
+            default: 'Point'
         },
         coordinates: {
             type: [Number],
@@ -32,13 +32,13 @@ const cameraSchema = new mongoose.Schema({
     },
     resolution: {
         type: String,
-        enum: ['720p', '1080p', '2K', '4K'],
-        default: '1080p'
+        enum: ['1920x1080', '1280x720', '3840x2160', '2560x1440'],
+        default: '1920x1080'
     },
     visionRange: {
         type: Number,
-        min: [0, 'Vision range cannot be negative'],
-        default: 100 // in meters
+        default: 100,
+        min: [1, 'Vision range must be at least 1 meter']
     },
     status: {
         type: String,
@@ -54,7 +54,7 @@ cameraSchema.index({ location: '2dsphere' });
 
 // Update the updatedAt field before saving
 cameraSchema.pre('save', function(next) {
-    this.updatedAt = Date.now();
+    this.updatedAt = new Date();
     next();
 });
 

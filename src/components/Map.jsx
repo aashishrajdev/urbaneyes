@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -41,7 +41,11 @@ function LocationMarker({ initialPosition, onLocationSelect }) {
         },
     });
 
-    return <Marker position={position} icon={icon} />;
+    return (
+        <Marker position={position} icon={icon}>
+            <Popup>Selected Location</Popup>
+        </Marker>
+    );
 }
 
 export default function Map({ initialPosition, markers = [], onLocationSelect }) {
@@ -89,7 +93,26 @@ export default function Map({ initialPosition, markers = [], onLocationSelect })
                     key={marker.id}
                     position={marker.coordinates}
                     icon={icon}
-                />
+                >
+                    <Popup>
+                        <div className="p-2">
+                            <h3 className="font-bold text-lg">{marker.name}</h3>
+                            {marker.description && <p className="text-sm text-gray-600">{marker.description}</p>}
+                            {marker.status && (
+                                <p className="text-sm mt-1">
+                                    Status: <span className={`font-medium ${
+                                        marker.status === 'active' ? 'text-green-600' :
+                                        marker.status === 'inactive' ? 'text-red-600' :
+                                        'text-yellow-600'
+                                    }`}>{marker.status}</span>
+                                </p>
+                            )}
+                            <p className="text-xs text-gray-500 mt-1">
+                                Lat: {marker.coordinates[0].toFixed(6)}, Lng: {marker.coordinates[1].toFixed(6)}
+                            </p>
+                        </div>
+                    </Popup>
+                </Marker>
             ))}
         </MapContainer>
     );

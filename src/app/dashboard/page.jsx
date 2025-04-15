@@ -111,43 +111,64 @@ export default function Dashboard() {
 
         <div className="bg-white shadow overflow-hidden sm:rounded-md">
           <ul className="divide-y divide-gray-200">
-            {cameras.map((camera) => (
-              <li key={camera._id}>
-                <div className="px-4 py-4 sm:px-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <Link href={`/cameras/${camera._id}`} className="text-sm font-medium text-indigo-600 truncate hover:text-indigo-900">
-                        {camera.name}
-                      </Link>
-                      <span className={`ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        camera.status === 'active' ? 'bg-green-100 text-green-800' :
-                        camera.status === 'inactive' ? 'bg-red-100 text-red-800' :
-                        'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {camera.status}
-                      </span>
+            {cameras.map((camera) => {
+              const coordinates = camera.location?.coordinates || [];
+              const [longitude, latitude] = coordinates;
+              
+              return (
+                <li key={camera._id}>
+                  <div className="px-4 py-4 sm:px-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Link href={`/cameras/${camera._id}`} className="text-sm font-medium text-indigo-600 truncate hover:text-indigo-900">
+                          {camera.name}
+                        </Link>
+                        <span className={`ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          camera.status === 'active' ? 'bg-green-100 text-green-800' :
+                          camera.status === 'inactive' ? 'bg-red-100 text-red-800' :
+                          'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {camera.status}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <Link
+                          href={`/cameras/${camera._id}`}
+                          className="text-indigo-600 hover:text-indigo-900"
+                        >
+                          View
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(camera._id)}
+                          disabled={deleteStatus[camera._id] === 'deleting'}
+                          className={`text-red-600 hover:text-red-900 ${
+                            deleteStatus[camera._id] === 'deleting' ? 'opacity-50 cursor-not-allowed' : ''
+                          }`}
+                        >
+                          {deleteStatus[camera._id] === 'deleting' ? 'Deleting...' : 'Delete'}
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-4">
-                      <Link
-                        href={`/cameras/${camera._id}`}
-                        className="text-indigo-600 hover:text-indigo-900"
-                      >
-                        View
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(camera._id)}
-                        disabled={deleteStatus[camera._id] === 'deleting'}
-                        className={`text-red-600 hover:text-red-900 ${
-                          deleteStatus[camera._id] === 'deleting' ? 'opacity-50 cursor-not-allowed' : ''
-                        }`}
-                      >
-                        {deleteStatus[camera._id] === 'deleting' ? 'Deleting...' : 'Delete'}
-                      </button>
+                    <div className="mt-2 sm:flex sm:justify-between">
+                      <div className="sm:flex">
+                        <p className="flex items-center text-sm text-gray-500">
+                          {camera.description || 'No description'}
+                        </p>
+                      </div>
+                      <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                        {latitude && longitude ? (
+                          <p>
+                            Location: {latitude.toFixed(6)}, {longitude.toFixed(6)}
+                          </p>
+                        ) : (
+                          <p>Location: Not set</p>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>

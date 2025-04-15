@@ -16,7 +16,23 @@ export async function GET(request, { params }) {
             );
         }
 
-        return NextResponse.json({ success: true, data: camera });
+        // Format the camera data to ensure location is properly structured
+        const formattedCamera = {
+            _id: camera._id,
+            name: camera.name,
+            description: camera.description,
+            resolution: camera.resolution,
+            visionRange: camera.visionRange,
+            status: camera.status,
+            location: camera.location,
+            createdAt: camera.createdAt,
+            updatedAt: camera.updatedAt
+        };
+
+        // Log the location data for debugging
+        console.log('Camera location data:', formattedCamera.location);
+
+        return NextResponse.json({ success: true, data: formattedCamera });
     } catch (error) {
         console.error('Error fetching camera:', error);
         return NextResponse.json(
