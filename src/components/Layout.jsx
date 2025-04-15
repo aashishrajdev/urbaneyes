@@ -26,44 +26,14 @@ export default function Layout({ children }) {
             </div>
             <div className="flex space-x-4">
               <Link
-                href="/home"
+                href="/dashboard"
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/home')
+                  isActive('/dashboard')
                     ? 'bg-blue-700 text-white'
                     : 'text-white hover:bg-blue-500'
                 }`}
               >
-                Home
-              </Link>
-              <Link
-                href="/about"
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/about')
-                    ? 'bg-blue-700 text-white'
-                    : 'text-white hover:bg-blue-500'
-                }`}
-              >
-                About
-              </Link>
-              <Link
-                href="/map"
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/map')
-                    ? 'bg-blue-700 text-white'
-                    : 'text-white hover:bg-blue-500'
-                }`}
-              >
-                Map
-              </Link>
-              <Link
-                href="/search"
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/search')
-                    ? 'bg-blue-700 text-white'
-                    : 'text-white hover:bg-blue-500'
-                }`}
-              >
-                Search
+                Dashboard
               </Link>
               <Link
                 href="/add"
@@ -74,16 +44,6 @@ export default function Layout({ children }) {
                 }`}
               >
                 Add Camera
-              </Link>
-              <Link
-                href="/login"
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/login')
-                    ? 'bg-blue-700 text-white'
-                    : 'text-white hover:bg-blue-500'
-                }`}
-              >
-                Login
               </Link>
             </div>
           </div>

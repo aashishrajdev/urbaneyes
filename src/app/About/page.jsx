@@ -1,55 +1,47 @@
 'use client';
 
-import Link from 'next/link';
-
 export default function About() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
-            About UrbanEyes
-          </h1>
-          <p className="mt-5 max-w-xl mx-auto text-xl text-gray-500">
-            Empowering cities with smart surveillance solutions
-          </p>
-        </div>
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8">About UrbanEyes</h1>
+        
+        <div className="space-y-6">
+          <section>
+            <h2 className="text-2xl font-semibold mb-4">Our Mission</h2>
+            <p className="text-gray-700">
+              UrbanEyes is a comprehensive camera management system designed to enhance urban safety and monitoring through advanced surveillance technology. Our platform provides a centralized solution for managing, monitoring, and analyzing camera networks across cities.
+            </p>
+          </section>
 
-        <div className="mt-12">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="px-4 py-5 sm:p-6">
-                <h3 className="text-lg font-medium text-gray-900">Our Mission</h3>
-                <div className="mt-2 text-base text-gray-500">
-                  <p>
-                    UrbanEyes is dedicated to enhancing urban safety and security through advanced
-                    surveillance technology.
-                  </p>
-                </div>
-              </div>
+          <section>
+            <h2 className="text-2xl font-semibold mb-4">Features</h2>
+            <ul className="list-disc list-inside space-y-2 text-gray-700">
+              <li>Real-time camera monitoring and management</li>
+              <li>Interactive map interface for camera location visualization</li>
+              <li>Secure user authentication and access control</li>
+              <li>Camera status tracking and maintenance scheduling</li>
+              <li>Comprehensive dashboard for system overview</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold mb-4">Technology</h2>
+            <p className="text-gray-700">
+              Built with modern web technologies including Next.js, React, and MongoDB, UrbanEyes offers a robust and scalable solution for urban surveillance management. Our system is designed to be user-friendly while maintaining high security standards.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold mb-4">Contact Us</h2>
+            <p className="text-gray-700">
+              For more information about UrbanEyes or to discuss implementation in your city, please contact our team at:
+            </p>
+            <div className="mt-4 space-y-2">
+              <p className="text-gray-700">Email: info@urbaneyes.com</p>
+              <p className="text-gray-700">Phone: +1 (555) 123-4567</p>
             </div>
-
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="px-4 py-5 sm:p-6">
-                <h3 className="text-lg font-medium text-gray-900">Our Vision</h3>
-                <div className="mt-2 text-base text-gray-500">
-                  <p>
-                    We envision a future where cities can leverage technology to create safer, more
-                    secure urban environments.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-12 text-center">
-          <Link
-            href="/"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
-          >
-            Back to Home
-          </Link>
+          </section>
         </div>
       </div>
     </div>

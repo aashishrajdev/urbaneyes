@@ -1,59 +1,96 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
-// Fix for default marker icons in Next.js
+// Define the icon
 const icon = L.icon({
-  iconUrl: '/images/marker-icon.png',
-  iconRetinaUrl: '/images/marker-icon-2x.png',
-  shadowUrl: '/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
+    iconUrl: '/images/marker-icon.svg',
+    shadowUrl: '/images/marker-shadow.svg',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
 });
 
-function LocationMarker({ onLocationSelect }) {
-  const [position, setPosition] = useState(null);
+// Default center coordinates (India)
+const defaultCenter = [20.5937, 78.9629];
 
-  const map = useMapEvents({
-    click(e) {
-      const newPosition = e.latlng;
-      setPosition(newPosition);
-      onLocationSelect(newPosition);
-    },
-  });
+// LocationMarker component for handling clicks
+function LocationMarker({ initialPosition, onLocationSelect }) {
+    const [position, setPosition] = useState(defaultCenter);
 
-  return position === null ? null : (
-    <Marker position={position} icon={icon} />
-  );
+    useEffect(() => {
+        if (initialPosition && Array.isArray(initialPosition) && initialPosition.length === 2) {
+            const [lat, lng] = initialPosition;
+            if (typeof lat === 'number' && typeof lng === 'number') {
+                setPosition([lat, lng]);
+            }
+        }
+    }, [initialPosition]);
+
+    const map = useMapEvents({
+        click(e) {
+            const newPosition = [e.latlng.lat, e.latlng.lng];
+            setPosition(newPosition);
+            if (onLocationSelect) {
+                onLocationSelect(newPosition);
+            }
+        },
+    });
+
+    return <Marker position={position} icon={icon} />;
 }
 
-export default function Map({ onLocationSelect }) {
-  const [mounted, setMounted] = useState(false);
+export default function Map({ initialPosition, markers = [], onLocationSelect }) {
+    const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
-  if (!mounted) {
-    return null;
-  }
+    if (!mounted) {
+        return <div className="h-[400px] w-full bg-gray-100 flex items-center justify-center">Loading map...</div>;
+    }
 
-  return (
-    <MapContainer
-      center={[51.505, -0.09]}
-      zoom={13}
-      style={{ height: '100%', width: '100%' }}
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <LocationMarker onLocationSelect={onLocationSelect} />
-    </MapContainer>
-  );
+    // Ensure initialPosition is valid, otherwise use default
+    let center = defaultCenter;
+    if (initialPosition && Array.isArray(initialPosition) && initialPosition.length === 2) {
+        const [lat, lng] = initialPosition;
+        if (typeof lat === 'number' && typeof lng === 'number') {
+            center = [lat, lng];
+        }
+    }
+
+    // Filter out invalid markers
+    const validMarkers = markers.filter(marker => {
+        if (!marker || !marker.coordinates || !Array.isArray(marker.coordinates) || marker.coordinates.length !== 2) {
+            return false;
+        }
+        const [lat, lng] = marker.coordinates;
+        return typeof lat === 'number' && typeof lng === 'number';
+    });
+
+    return (
+        <MapContainer
+            center={center}
+            zoom={13}
+            style={{ height: '400px', width: '100%' }}
+        >
+            <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <LocationMarker initialPosition={initialPosition} onLocationSelect={onLocationSelect} />
+            {validMarkers.map((marker) => (
+                <Marker
+                    key={marker.id}
+                    position={marker.coordinates}
+                    icon={icon}
+                />
+            ))}
+        </MapContainer>
+    );
 } 

@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# UrbanEye - Camera Management System
+
+A simple web application for managing surveillance cameras across a city.
+
+## Features
+
+- Add cameras with details (name, description, resolution, vision range, status)
+- Select camera location on a map
+- View all cameras on a dashboard with a map
+- Simple and intuitive user interface
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js (v14 or later)
+- MongoDB (local or remote)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/urbaneye.git
+   cd urbaneye
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Install dependencies:
+   ```
+   npm install
+   ```
 
-## Learn More
+3. Download Leaflet assets:
+   ```
+   npm run download-assets
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. Create a `.env` file in the root directory with the following content:
+   ```
+   MONGODB_URI=mongodb://localhost:27017/urbaneye
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. Start the development server:
+   ```
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+6. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Deploy on Vercel
+## Usage
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Add a Camera**:
+   - Click on "Add Camera" in the navigation bar
+   - Fill in the camera details
+   - Click on the map to select the camera location
+   - Click "Add Camera" to save
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. **View Cameras**:
+   - Go to the Dashboard to see all cameras
+   - The map shows the location of all cameras
+   - Click on a marker to see camera details
+
+## Technologies Used
+
+- Next.js
+- React
+- MongoDB
+- Mongoose
+- Leaflet
+- Tailwind CSS
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
