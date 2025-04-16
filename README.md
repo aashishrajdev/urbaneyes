@@ -13,7 +13,7 @@ A simple web application for managing surveillance cameras across a city.
 
 ### Prerequisites
 
-- Node.js (v14 or later)
+- nextjs
 - MongoDB (local or remote)
 
 ### Installation
