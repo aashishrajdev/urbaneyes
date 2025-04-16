@@ -43,19 +43,26 @@ function LocationMarker({ initialPosition, onLocationSelect }) {
 
   const map = useMapEvents({
     click(e) {
-      const newPosition = [e.latlng.lat, e.latlng.lng];
+      const { lat, lng } = e.latlng;
+      const newPosition = [lat, lng];
       setPosition(newPosition);
       if (onLocationSelect) {
-        onLocationSelect(newPosition);
+        onLocationSelect({ lat, lng });
       }
     },
   });
 
-  return (
+  return position ? (
     <Marker position={position} icon={icon}>
-      <Popup>Selected Location</Popup>
+      <Popup>
+        Selected Location
+        <br />
+        Lat: {position[0].toFixed(6)}
+        <br />
+        Lng: {position[1].toFixed(6)}
+      </Popup>
     </Marker>
-  );
+  ) : null;
 }
 
 export default function Map({

@@ -38,15 +38,25 @@ export default function AddCamera() {
     }));
   };
 
-  const handleLocationSelect = (latlng) => {
-    setSelectedLocation(latlng);
+  const handleLocationSelect = (location) => {
+    if (
+      !location ||
+      typeof location.lat !== "number" ||
+      typeof location.lng !== "number"
+    ) {
+      setError("Please select a valid location on the map");
+      return;
+    }
+
+    setSelectedLocation(location);
     setFormData((prev) => ({
       ...prev,
       location: {
         type: "Point",
-        coordinates: [latlng.lng, latlng.lat],
+        coordinates: [location.lng, location.lat],
       },
     }));
+    setError("");
   };
 
   const nextStep = () => {

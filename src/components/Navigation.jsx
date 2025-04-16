@@ -29,7 +29,7 @@ export default function Navigation() {
             <Link href="/Home">
               <div className="flex-shrink-0">
                 <span className="text-white font-bold text-xl cursor-pointer">
-                  UrbanEyes
+                  UrbanEye
                 </span>
               </div>
             </Link>
