@@ -1,4 +1,4 @@
-# UrbanEye - Camera Management System
+# UrbanEye - Camera Geolocation System
 
 A simple web application for managing surveillance cameras across a city.
 
