@@ -116,8 +116,17 @@ export default function AddCamera() {
     setStep((prev) => prev - 1);
   };
 
+  const handleStatusChange = (e) => {
+    const value = e.target.value;
+    console.log('Status changed to:', value);
+    setFormData((prev) => ({
+      ...prev,
+      status: value,
+    }));
+  };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setIsLoading(true);
     setError("");
     setSuccess("");
@@ -265,7 +274,7 @@ export default function AddCamera() {
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="space-y-8">
                 {step === 1 && (
                   <div className="space-y-6">
                     <div>
@@ -398,7 +407,7 @@ export default function AddCamera() {
                             name="status"
                             id="status"
                             value={formData.status}
-                            onChange={handleInputChange}
+                            onChange={handleStatusChange}
                             className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                           >
                             <option value="active">Active</option>
@@ -460,7 +469,8 @@ export default function AddCamera() {
                     </button>
                   ) : (
                     <button
-                      type="submit"
+                      type="button"
+                      onClick={handleSubmit}
                       disabled={isLoading}
                       className="btn-primary"
                     >
@@ -475,7 +485,7 @@ export default function AddCamera() {
                     </button>
                   )}
                 </div>
-              </form>
+              </div>
             </div>
           </div>
         </div>
