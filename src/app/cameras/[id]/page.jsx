@@ -91,20 +91,20 @@ export default function CameraDetails() {
                            !isNaN(longitude);
 
     return (
-        <div className="min-h-screen bg-gray-100 p-8">
-            <div className="max-w-7xl mx-auto">
+        <div className="min-h-screen bg-gray-100 py-10">
+            <div className="container-page">
                 <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-bold text-gray-900">Camera Details</h1>
+                    <h1 className="section-title">Camera Details</h1>
                     <Link
                         href="/dashboard"
-                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        className="btn-secondary"
                     >
                         Back to Dashboard
                     </Link>
                 </div>
 
-                <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-                    <div className="px-4 py-5 sm:px-6">
+                <div className="card overflow-hidden">
+                    <div className="card-padding">
                         <h3 className="text-lg leading-6 font-medium text-gray-900">{camera.name}</h3>
                         <p className="mt-1 max-w-2xl text-sm text-gray-500">Camera details and location information.</p>
                     </div>
@@ -144,9 +144,10 @@ export default function CameraDetails() {
                                                 <p>Latitude: {latitude.toFixed(6)}</p>
                                                 <p>Longitude: {longitude.toFixed(6)}</p>
                                             </div>
-                                            <div className="mt-4 h-[400px] w-full rounded-lg overflow-hidden border border-gray-200">
+                                            <div className="mt-4 h-[420px] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                                                 <Map 
                                                     initialPosition={[latitude, longitude]}
+                                                    zoom={16}
                                                     markers={[{ 
                                                         id: camera._id, 
                                                         coordinates: [latitude, longitude],

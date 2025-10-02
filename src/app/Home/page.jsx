@@ -1,144 +1,194 @@
 "use client";
 
 import Link from "next/link";
-import { FaGithub, FaTwitter, FaLinkedin } from "react-icons/fa";
+import { 
+  MapIcon, 
+  MagnifyingGlassIcon, 
+  ChartBarIcon, 
+  PlusIcon,
+  ShieldCheckIcon,
+  EyeIcon,
+  CpuChipIcon,
+  GlobeAltIcon
+} from "@heroicons/react/24/outline";
 
 export default function Home() {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 flex flex-col justify-between relative overflow-hidden">
-      {/* Blurry Background Orbs */}
-      <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-blue-300 opacity-30 rounded-full blur-3xl animate-pulse-slow" />
-      <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-blue-200 opacity-20 rounded-full blur-2xl animate-pulse-slow" />
+  const features = [
+    {
+      icon: MapIcon,
+      title: "Camera Map",
+      description: "View camera locations on an interactive map"
+    },
+    {
+      icon: EyeIcon,
+      title: "Camera List",
+      description: "Browse and manage your camera collection"
+    },
+    {
+      icon: ShieldCheckIcon,
+      title: "User Login",
+      description: "Simple authentication system"
+    },
+    {
+      icon: CpuChipIcon,
+      title: "Add Cameras",
+      description: "Add new cameras with location and details"
+    }
+  ];
 
-      {/* Hero Content */}
-      <main className="flex-grow z-10 flex items-center justify-center">
-        <div className="max-w-7xl mx-auto py-20 px-6 text-center">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold text-gray-900 leading-tight animate-slide-up">
-            Welcome to <span className="text-blue-600">UrbanEye</span>
-          </h1>
-          <p className="mt-6 text-lg sm:text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto animate-fade-in">
-            Empowering cities with{" "}
-            <span className="font-semibold text-blue-700">
-              smart surveillance
-            </span>{" "}
-            for a <span className="italic">safer tomorrow</span>.
-          </p>
-          <div className="mt-10 flex flex-wrap justify-center gap-6 animate-fade-in-delay">
-            <Link
-              href="/map"
-              className="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-lg shadow-md text-white bg-blue-600 hover:bg-blue-700 transition-transform hover:scale-105"
-            >
-              View Map
-            </Link>
-            <Link
-              href="/search"
-              className="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-lg shadow-md text-blue-600 bg-white border border-blue-600 hover:bg-blue-50 hover:scale-105"
-            >
-              Search Cameras
-            </Link>
+  const stats = [
+    { label: "Cameras", value: "12", icon: EyeIcon },
+    { label: "Locations", value: "3", icon: GlobeAltIcon },
+    { label: "Users", value: "5", icon: ShieldCheckIcon },
+    { label: "Uptime", value: "99.9%", icon: CpuChipIcon }
+  ];
+
+  return (
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-full blur-3xl floating-animation" />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-indigo-400/20 to-pink-400/20 rounded-full blur-3xl floating-animation" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400/10 to-blue-400/10 rounded-full blur-2xl pulse-glow" />
+      </div>
+
+      {/* Hero Section */}
+      <section className="relative z-10 pt-20 pb-16">
+        <div className="container-page">
+          <div className="text-center max-w-5xl mx-auto">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-sm font-medium text-slate-700 mb-8 slide-up">
+              <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+              Live System Status: All Systems Operational
+            </div>
+            
+            <h1 className="section-title mb-6 slide-up">
+              Welcome to <span className="gradient-text">UrbanEye</span>
+            </h1>
+            
+            <p className="section-subtitle max-w-3xl mx-auto mb-12 fade-in">
+              A simple camera management system to{" "}
+              <span className="font-semibold text-slate-800">
+                add, view, and organize
+              </span>{" "}
+              your surveillance cameras with{" "}
+              <span className="font-semibold text-slate-800">
+                map integration
+              </span>.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16 scale-in">
+              <Link href="/map" className="btn-primary text-lg px-8 py-4">
+                <MapIcon className="w-5 h-5 mr-2" />
+                View Live Map
+              </Link>
+              <Link href="/dashboard" className="btn-secondary text-lg px-8 py-4">
+                <ChartBarIcon className="w-5 h-5 mr-2" />
+                Open Dashboard
+              </Link>
+            </div>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+              {stats.map((stat, index) => {
+                const Icon = stat.icon;
+                return (
+                  <div key={index} className="card card-padding text-center scale-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="text-2xl font-bold text-slate-900 mb-1">{stat.value}</div>
+                    <div className="text-sm text-slate-600">{stat.label}</div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
-      </main>
+      </section>
+
+      {/* Features Section */}
+      <section className="relative z-10 py-16">
+        <div className="container-page">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+              Basic Features
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Simple tools to manage your camera collection
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <div key={index} className="card card-padding text-center group hover:scale-105 transition-all duration-300 scale-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <Icon className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-3">{feature.title}</h3>
+                  <p className="text-slate-600 leading-relaxed">{feature.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="relative z-10 py-16">
+        <div className="container-page">
+          <div className="card card-padding text-center max-w-4xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
+              Ready to Get Started?
+            </h2>
+            <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">
+              Try out the basic camera management features and see how easy it is to get started.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/add" className="btn-primary text-lg px-8 py-4">
+                <PlusIcon className="w-5 h-5 mr-2" />
+                Add Your First Camera
+              </Link>
+              <Link href="/search" className="btn-accent text-lg px-8 py-4">
+                <MagnifyingGlassIcon className="w-5 h-5 mr-2" />
+                Explore Cameras
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
-      <footer className="z-10 bg-white bg-opacity-60 backdrop-blur-sm border-t border-gray-200 shadow-inner py-8">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center text-center sm:text-left text-gray-600 space-y-4 sm:space-y-0">
-          <div>
-            <p className="font-semibold text-gray-800">
-              UrbanEye © {new Date().getFullYear()}
-            </p>
-            <p>Built for smarter, safer cities.</p>
-          </div>
+      <footer className="relative z-10 mt-20 border-t border-white/20">
+        <div className="container-page py-12">
+          <div className="flex flex-col lg:flex-row justify-between items-center text-center lg:text-left">
+            <div className="mb-8 lg:mb-0">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">U</span>
+                </div>
+                <span className="text-xl font-bold gradient-text">UrbanEye</span>
+              </div>
+              <p className="text-slate-600">
+                © {new Date().getFullYear()} UrbanEye. Built for smarter, safer cities.
+              </p>
+            </div>
 
-          <div className="flex space-x-6 text-blue-600 text-xl">
-            <a
-              href="https://github.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub"
-              className="hover:text-blue-800 transition-colors"
-            >
-              <FaGithub />
-            </a>
-            <a
-              href="https://twitter.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Twitter"
-              className="hover:text-blue-800 transition-colors"
-            >
-              <FaTwitter />
-            </a>
-            <a
-              href="https://linkedin.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn"
-              className="hover:text-blue-800 transition-colors"
-            >
-              <FaLinkedin />
-            </a>
-          </div>
-
-          <div className="space-x-4">
-            <Link href="/about" className="hover:underline">
-              About
-            </Link>
-            <Link href="/contact" className="hover:underline">
-              Contact
-            </Link>
-            <Link href="/privacy" className="hover:underline">
-              Privacy
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-6 text-slate-600">
+              <Link href="/About" className="hover:text-slate-900 transition-colors">
+                About
+              </Link>
+              <Link href="/contact" className="hover:text-slate-900 transition-colors">
+                Contact
+              </Link>
+              <Link href="/privacy" className="hover:text-slate-900 transition-colors">
+                Privacy
+              </Link>
+            </div>
           </div>
         </div>
       </footer>
-
-      {/* Animations */}
-      <style jsx>{`
-        @keyframes slide-up {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-        @keyframes pulse-slow {
-          0%,
-          100% {
-            transform: scale(1);
-            opacity: 0.3;
-          }
-          50% {
-            transform: scale(1.1);
-            opacity: 0.5;
-          }
-        }
-        .animate-slide-up {
-          animation: slide-up 1s ease-out;
-        }
-        .animate-fade-in {
-          animation: fade-in 1.5s ease-out;
-        }
-        .animate-fade-in-delay {
-          animation: fade-in 2s ease-out 0.5s;
-          animation-fill-mode: both;
-        }
-        .animate-pulse-slow {
-          animation: pulse-slow 8s ease-in-out infinite;
-        }
-      `}</style>
     </div>
   );
 }

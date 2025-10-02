@@ -37,7 +37,21 @@ const cameraSchema = new mongoose.Schema(
     },
     resolution: {
       type: String,
-      enum: ["1920x1080", "1280x720", "3840x2160", "2560x1440"],
+      enum: [
+        "640x480",   // VGA
+        "800x600",   // SVGA
+        "1024x768",  // XGA
+        "1280x720",  // HD 720p
+        "1366x768",  // HD
+        "1600x900",  // HD+
+        "1920x1080", // Full HD 1080p
+        "1920x1200", // WUXGA
+        "2560x1440", // QHD 1440p
+        "2560x1600", // WQXGA
+        "3200x1800", // QHD+
+        "3840x2160", // 4K UHD
+        "4096x2160"  // DCI 4K
+      ],
       default: "1920x1080",
     },
     visionRange: {
