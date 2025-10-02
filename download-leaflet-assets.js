@@ -2,13 +2,13 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 
-// Create the images directory if it doesn't exist
+
 const imagesDir = path.join(__dirname, 'public', 'images');
 if (!fs.existsSync(imagesDir)) {
   fs.mkdirSync(imagesDir, { recursive: true });
 }
 
-// Function to download a file
+
 function downloadFile(url, dest) {
   return new Promise((resolve, reject) => {
     const file = fs.createWriteStream(dest);
@@ -27,7 +27,7 @@ function downloadFile(url, dest) {
   });
 }
 
-// Download the Leaflet marker icons
+
 const files = [
   {
     url: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon.png',
@@ -43,7 +43,7 @@ const files = [
   }
 ];
 
-// Download all files
+
 Promise.all(files.map(file => downloadFile(file.url, file.dest)))
   .then(() => {
     console.log('All Leaflet assets downloaded successfully!');

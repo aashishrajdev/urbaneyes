@@ -56,7 +56,7 @@ export async function POST(request) {
         type: "Point",
         coordinates: body.location.coordinates,
       },
-      resolution: body.resolution || "1080p",
+      resolution: body.resolution || "1920x1080",
       visionRange: body.visionRange ? Number(body.visionRange) : 100,
       status: body.status || "active",
     };

@@ -4,8 +4,25 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 
-// Dynamically import the Map component to avoid SSR issues
-const Map = dynamic(() => import("@/components/Map"), {
+// Central list of allowed resolutions (must match model enum)
+const RESOLUTIONS = [
+  "640x480",
+  "800x600",
+  "1024x768",
+  "1280x720",
+  "1366x768",
+  "1600x900",
+  "1920x1080",
+  "1920x1200",
+  "2560x1440",
+  "2560x1600",
+  "3200x1800",
+  "3840x2160",
+  "4096x2160",
+];
+
+
+const SimpleMap = dynamic(() => import("@/components/SimpleMap"), {
   ssr: false,
   loading: () => (
     <div className="h-[400px] w-full bg-gray-100 flex items-center justify-center">
@@ -32,10 +49,30 @@ export default function AddCamera() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    
+    // Clear any existing errors when user starts typing
+    if (error) {
+      setError("");
+    }
+    
+    if (name === "resolution") {
+      // Normalize common user inputs like 1920X1080 or extra spaces
+      const normalized = String(value).trim().replace(/X/g, "x");
+      setFormData((prev) => ({
+        ...prev,
+        resolution: normalized,
+      }));
+      return;
+    }
+    
+    setFormData((prev) => {
+      const newData = {
+        ...prev,
+        [name]: value,
+      };
+      console.log('Form data updated:', name, value, newData);
+      return newData;
+    });
   };
 
   const handleLocationSelect = (location) => {
@@ -60,7 +97,10 @@ export default function AddCamera() {
   };
 
   const nextStep = () => {
-    if (step === 1 && (!formData.name || !formData.description)) {
+    // Clear any existing errors
+    setError("");
+    
+    if (step === 1 && (!formData.name || !formData.description || !formData.resolution)) {
       setError("Please fill in all required fields");
       return;
     }
@@ -68,7 +108,7 @@ export default function AddCamera() {
       setError("Please select a location on the map");
       return;
     }
-    setError("");
+    
     setStep((prev) => prev + 1);
   };
 
@@ -76,8 +116,17 @@ export default function AddCamera() {
     setStep((prev) => prev - 1);
   };
 
+  const handleStatusChange = (e) => {
+    const value = e.target.value;
+    console.log('Status changed to:', value);
+    setFormData((prev) => ({
+      ...prev,
+      status: value,
+    }));
+  };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setIsLoading(true);
     setError("");
     setSuccess("");
@@ -98,9 +147,10 @@ export default function AddCamera() {
         );
       }
 
-      // Validate resolution
-      if (!formData.resolution) {
-        throw new Error("Please select a resolution");
+      // Validate resolution against allowlist
+      const resolution = String(formData.resolution || "").trim().replace(/X/g, "x");
+      if (!resolution || !RESOLUTIONS.includes(resolution)) {
+        throw new Error("Please select a valid resolution from the list");
       }
 
       // Validate vision range
@@ -120,7 +170,7 @@ export default function AddCamera() {
           type: "Point",
           coordinates: formData.location.coordinates, // Already in [longitude, latitude] format
         },
-        resolution: formData.resolution,
+        resolution,
         visionRange: Number(formData.visionRange),
         status: formData.status || "active",
       };
@@ -161,197 +211,282 @@ export default function AddCamera() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-white shadow sm:rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <h3 className="text-lg leading-6 font-medium text-gray-900">
-              Add New Camera
-            </h3>
-            <div className="mt-2 max-w-xl text-sm text-gray-500">
-              <p>Fill in the details to add a new camera to the system.</p>
+    <div className="min-h-screen py-12">
+      <div className="container-page">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <h1 className="section-title mb-4">Add New Camera</h1>
+            <p className="section-subtitle max-w-2xl mx-auto">
+              Set up a new surveillance camera in your network with our guided setup process
+            </p>
+          </div>
+
+          {/* Progress Steps */}
+          <div className="card card-padding mb-8">
+            <div className="flex items-center justify-between">
+              {[1, 2, 3].map((stepNumber) => (
+                <div key={stepNumber} className="flex items-center">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
+                    step >= stepNumber 
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white' 
+                      : 'bg-slate-200 text-slate-600'
+                  }`}>
+                    {stepNumber}
+                  </div>
+                  <div className="ml-3 hidden sm:block">
+                    <p className={`text-sm font-medium ${
+                      step >= stepNumber ? 'text-slate-900' : 'text-slate-500'
+                    }`}>
+                      {stepNumber === 1 && 'Basic Info'}
+                      {stepNumber === 2 && 'Location'}
+                      {stepNumber === 3 && 'Settings'}
+                    </p>
+                  </div>
+                  {stepNumber < 3 && (
+                    <div className={`w-16 h-0.5 mx-4 ${
+                      step > stepNumber ? 'bg-gradient-to-r from-blue-500 to-purple-600' : 'bg-slate-200'
+                    }`} />
+                  )}
+                </div>
+              ))}
             </div>
+          </div>
 
-            {error && (
-              <div className="mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-                {error}
-              </div>
-            )}
-
-            {success && (
-              <div className="mt-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
-                {success}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="mt-5 space-y-6">
-              {step === 1 && (
-                <div className="space-y-4">
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Camera Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      id="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="description"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Description *
-                    </label>
-                    <textarea
-                      name="description"
-                      id="description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      rows={3}
-                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      required
-                    />
+          {/* Form Card */}
+          <div className="card">
+            <div className="card-padding">
+              {error && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-5 h-5 text-red-500">⚠️</div>
+                    <p className="text-red-700 font-medium">{error}</p>
                   </div>
                 </div>
               )}
 
-              {step === 2 && (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Select Location *
-                    </label>
-                    <div className="mt-1 h-[400px] w-full">
-                      <Map
-                        initialPosition={
-                          formData.location
-                            ? [
-                                formData.location.coordinates[1],
-                                formData.location.coordinates[0],
-                              ]
-                            : [20.5937, 78.9629]
-                        }
-                        onLocationSelect={handleLocationSelect}
-                      />
-                    </div>
-                    {selectedLocation && (
-                      <div className="mt-4 p-4 bg-gray-50 rounded-md">
-                        <p className="text-sm font-medium">
-                          Selected Location:
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          Latitude:{" "}
-                          {selectedLocation?.lat?.toFixed(6) || "Not selected"}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          Longitude:{" "}
-                          {selectedLocation?.lng?.toFixed(6) || "Not selected"}
-                        </p>
+              {success && (
+                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-5 h-5 text-green-500">✅</div>
+                    <p className="text-green-700 font-medium">{success}</p>
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-8">
+                {step === 1 && (
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-xl font-semibold text-slate-900 mb-6">Camera Information</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="md:col-span-2">
+                          <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
+                            Camera Name *
+                          </label>
+                          <input
+                            type="text"
+                            name="name"
+                            id="name"
+                            value={formData.name}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            placeholder="e.g., Main Street Camera 01"
+                            required
+                          />
+                        </div>
+
+                        <div className="md:col-span-2">
+                          <label htmlFor="description" className="block text-sm font-semibold text-slate-700 mb-2">
+                            Description *
+                          </label>
+                          <textarea
+                            name="description"
+                            id="description"
+                            value={formData.description}
+                            onChange={handleInputChange}
+                            rows={4}
+                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+                            placeholder="Describe the camera's purpose and coverage area..."
+                            required
+                          />
+                        </div>
+
+                        <div>
+                          <label htmlFor="resolution" className="block text-sm font-semibold text-slate-700 mb-2">
+                            Resolution *
+                          </label>
+                          <select
+                            name="resolution"
+                            id="resolution"
+                            value={formData.resolution}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            required
+                          >
+                            <option value="">Select resolution</option>
+                            {RESOLUTIONS.map((r) => (
+                              <option key={r} value={r}>{r}</option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div>
+                          <label htmlFor="visionRange" className="block text-sm font-semibold text-slate-700 mb-2">
+                            Vision Range (meters)
+                          </label>
+                          <input
+                            type="number"
+                            name="visionRange"
+                            id="visionRange"
+                            value={formData.visionRange}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            placeholder="e.g., 100"
+                          />
+                        </div>
                       </div>
-                    )}
+                    </div>
                   </div>
-                </div>
-              )}
-
-              {step === 3 && (
-                <div className="space-y-4">
-                  <div>
-                    <label
-                      htmlFor="resolution"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Resolution
-                    </label>
-                    <input
-                      type="text"
-                      name="resolution"
-                      id="resolution"
-                      value={formData.resolution}
-                      onChange={handleInputChange}
-                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      placeholder="e.g., 1920x1080"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="visionRange"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Vision Range (in meters)
-                    </label>
-                    <input
-                      type="number"
-                      name="visionRange"
-                      id="visionRange"
-                      value={formData.visionRange}
-                      onChange={handleInputChange}
-                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      placeholder="e.g., 100"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="status"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Status
-                    </label>
-                    <select
-                      name="status"
-                      id="status"
-                      value={formData.status}
-                      onChange={handleInputChange}
-                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    >
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                      <option value="maintenance">Maintenance</option>
-                    </select>
-                  </div>
-                </div>
-              )}
-
-              <div className="flex justify-between">
-                {step > 1 && (
-                  <button
-                    type="button"
-                    onClick={prevStep}
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Previous
-                  </button>
                 )}
-                {step < 3 ? (
-                  <button
-                    type="button"
-                    onClick={nextStep}
-                    className="ml-auto inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Next
-                  </button>
-                ) : (
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="ml-auto inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    {isLoading ? "Adding..." : "Add Camera"}
-                  </button>
+
+                {step === 2 && (
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-xl font-semibold text-slate-900 mb-2">Camera Location</h3>
+                      <p className="text-slate-600 mb-6">Click on the map to set the camera's location</p>
+                      
+                      <div className="border border-slate-200 rounded-xl overflow-hidden">
+                        <div style={{ height: 500 }}>
+                          <SimpleMap
+                            initialPosition={
+                              formData.location
+                                ? [
+                                    formData.location.coordinates[1],
+                                    formData.location.coordinates[0],
+                                  ]
+                                : [20.5937, 78.9629]
+                            }
+                            onLocationSelect={handleLocationSelect}
+                            height={500}
+                          />
+                        </div>
+                      </div>
+                      
+                      {selectedLocation && (
+                        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                              <span className="text-white text-sm">📍</span>
+                            </div>
+                            <div>
+                              <p className="font-semibold text-blue-900">Location Selected</p>
+                              <p className="text-sm text-blue-700">
+                                Latitude: {selectedLocation?.lat?.toFixed(6)} | 
+                                Longitude: {selectedLocation?.lng?.toFixed(6)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 )}
+
+                {step === 3 && (
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-xl font-semibold text-slate-900 mb-6">Final Settings</h3>
+                      <div className="space-y-6">
+                        <div>
+                          <label htmlFor="status" className="block text-sm font-semibold text-slate-700 mb-2">
+                            Camera Status
+                          </label>
+                          <select
+                            key="status-select"
+                            name="status"
+                            id="status"
+                            value={formData.status}
+                            onChange={handleStatusChange}
+                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                          >
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="maintenance">Maintenance</option>
+                          </select>
+                        </div>
+
+                        {/* Summary */}
+                        <div className="p-6 bg-slate-50 rounded-xl">
+                          <h4 className="font-semibold text-slate-900 mb-4">Setup Summary</h4>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-slate-600">Name:</span>
+                              <span className="font-medium">{formData.name || 'Not set'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-600">Resolution:</span>
+                              <span className="font-medium">{formData.resolution || 'Not set'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-600">Location:</span>
+                              <span className="font-medium">
+                                {selectedLocation ? 'Set' : 'Not set'}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-600">Status:</span>
+                              <span className="font-medium capitalize">{formData.status}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Navigation Buttons */}
+                <div className="flex justify-between pt-6 border-t border-slate-200">
+                  {step > 1 ? (
+                    <button
+                      type="button"
+                      onClick={prevStep}
+                      className="btn-secondary"
+                    >
+                      ← Previous
+                    </button>
+                  ) : (
+                    <div></div>
+                  )}
+                  
+                  {step < 3 ? (
+                    <button
+                      type="button"
+                      onClick={nextStep}
+                      className="btn-primary"
+                    >
+                      Next →
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleSubmit}
+                      disabled={isLoading}
+                      className="btn-primary"
+                    >
+                      {isLoading ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                          Adding Camera...
+                        </>
+                      ) : (
+                        'Add Camera'
+                      )}
+                    </button>
+                  )}
+                </div>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>

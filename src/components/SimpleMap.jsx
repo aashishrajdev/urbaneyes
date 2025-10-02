@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 // Fix for default marker icon in Next.js
 const icon = L.icon({
@@ -33,9 +34,19 @@ function LocationMarker({ initialPosition, onLocationSelect }) {
   });
 
   return position ? (
-    <Marker 
+    <Marker
       position={position}
       icon={icon}
+      draggable
+      eventHandlers={{
+        dragend: (e) => {
+          const m = e.target;
+          const latlng = m.getLatLng();
+          const next = [latlng.lat, latlng.lng];
+          setPosition(next);
+          onLocationSelect({ lat: latlng.lat, lng: latlng.lng });
+        },
+      }}
     >
       <Popup>
         Selected Location<br />
@@ -46,7 +57,24 @@ function LocationMarker({ initialPosition, onLocationSelect }) {
   ) : null;
 }
 
-export default function SimpleMap({ onLocationSelect, initialPosition = [20.5937, 78.9629] }) {
+function MapInvalidator() {
+  const map = useMap();
+  useEffect(() => {
+    // Give the layout a tick to stabilize, then force Leaflet to recalc size
+    const id = setTimeout(() => {
+      map.invalidateSize();
+    }, 0);
+    const onResize = () => map.invalidateSize();
+    window.addEventListener('resize', onResize);
+    return () => {
+      clearTimeout(id);
+      window.removeEventListener('resize', onResize);
+    };
+  }, [map]);
+  return null;
+}
+
+export default function SimpleMap({ onLocationSelect, initialPosition = [20.5937, 78.9629], height = 400 }) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -59,11 +87,13 @@ export default function SimpleMap({ onLocationSelect, initialPosition = [20.5937
 
   return (
     <MapContainer
+      key={`${initialPosition[0]}-${initialPosition[1]}`}
       center={initialPosition}
       zoom={13}
-      style={{ height: '100%', width: '100%' }}
+      style={{ height, minHeight: height, width: '100%', cursor: 'crosshair' }}
       scrollWheelZoom={true}
     >
+      <MapInvalidator />
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
